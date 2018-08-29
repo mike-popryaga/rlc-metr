@@ -1,0 +1,114 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 23, 1
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 4
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.thumb
+  12              		.syntax unified
+  13              		.file	"new.c"
+  14              		.section	.gnu.lto_.profile.67ab8ce8,"",%progbits
+  15 0000 789C6361 		.ascii	"x\234ca`\004B \000\000\0009\000\007"
+  15      60044220 
+  15      00000039 
+  15      0007
+  16              		.text
+  17              		.section	.gnu.lto_.icf.67ab8ce8,"",%progbits
+  18 0000 789C6361 		.ascii	"x\234ca`d\000\001&\006d\000\000\000\236\000\010"
+  18      60640001 
+  18      26066400 
+  18      00009E00 
+  18      08
+  19              		.text
+  20              		.section	.gnu.lto_.jmpfuncs.67ab8ce8,"",%progbits
+  21 0000 789C6361 		.ascii	"x\234ca`d\000\001&\006d\000\000\000\236\000\010"
+  21      60640001 
+  21      26066400 
+  21      00009E00 
+  21      08
+  22              		.text
+  23              		.section	.gnu.lto_.inline.67ab8ce8,"",%progbits
+  24 0000 789C6361 		.ascii	"x\234ca`d\000\001&\006d\000\000\000\236\000\010"
+  24      60640001 
+  24      26066400 
+  24      00009E00 
+  24      08
+  25              		.text
+  26              		.section	.gnu.lto_.pureconst.67ab8ce8,"",%progbits
+  27 0000 789C6361 		.ascii	"x\234ca`\004B \000\000\0009\000\007"
+  27      60044220 
+  27      00000039 
+  27      0007
+  28              		.text
+  29              		.section	.gnu.lto_.symbol_nodes.67ab8ce8,"",%progbits
+  30 0000 789C6361 		.ascii	"x\234ca`d`b\000\001\000\000F\000\010"
+  30      60646062 
+  30      00010000 
+  30      460008
+  31              		.text
+  32              		.section	.gnu.lto_.refs.67ab8ce8,"",%progbits
+  33 0000 789C6361 		.ascii	"x\234ca`\004B \000\000\0009\000\007"
+  33      60044220 
+  33      00000039 
+  33      0007
+  34              		.text
+  35              		.section	.gnu.lto_.decls.67ab8ce8,"",%progbits
+  36 0000 789C6361 		.ascii	"x\234ca`d\200\001\020K\005\210\377\003\001\210\035\306"
+  36      60648001 
+  36      104B0588 
+  36      FF030188 
+  36      1DC6
+  37 0012 40000000 		.ascii	"@\000\000\000\260\216\004~"
+  37      B08E047E 
+  38              		.text
+  39              		.section	.gnu.lto_.symtab.67ab8ce8,"",%progbits
+  40              		.text
+  41              		.section	.gnu.lto_.opts,"",%progbits
+  42 0000 272D666E 		.ascii	"'-fno-math-errno' '-fno-signed-zeros' '-fno-trappin"
+  42      6F2D6D61 
+  42      74682D65 
+  42      72726E6F 
+  42      2720272D 
+  43 0033 672D6D61 		.ascii	"g-math' '-fno-trapv' '-fno-openmp' '-fno-openacc' '"
+  43      74682720 
+  43      272D666E 
+  43      6F2D7472 
+  43      61707627 
+  44 0066 2D6D6370 		.ascii	"-mcpu=cortex-m3' '-march=armv7-m' '-mthumb' '-mlitt"
+  44      753D636F 
+  44      72746578 
+  44      2D6D3327 
+  44      20272D6D 
+  45 0099 6C652D65 		.ascii	"le-endian' '-munaligned-access' '-Os' '-fmessage-le"
+  45      6E646961 
+  45      6E272027 
+  45      2D6D756E 
+  45      616C6967 
+  46 00cc 6E677468 		.ascii	"ngth=0' '-fsigned-char' '-ffunction-sections' '-fda"
+  46      3D302720 
+  46      272D6673 
+  46      69676E65 
+  46      642D6368 
+  47 00ff 74612D73 		.ascii	"ta-sections' '-fsingle-precision-constant' '-flto' "
+  47      65637469 
+  47      6F6E7327 
+  47      20272D66 
+  47      73696E67 
+  48 0132 272D6666 		.ascii	"'-ffast-math'\000"
+  48      6173742D 
+  48      6D617468 
+  48      2700
+  49              		.text
+  50              		.comm	__gnu_lto_v1,1,1
+  51              		.comm	__gnu_lto_slim,1,1
+  52              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160919 (release) [ARM/embedded-5-bran
+DEFINED SYMBOLS
+                            *ABS*:00000000 new.c
+                            *COM*:00000001 __gnu_lto_v1
+                            *COM*:00000001 __gnu_lto_slim
+
+NO UNDEFINED SYMBOLS
