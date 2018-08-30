@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/rlcmeter/Release
+/rlcmeter2
+/doxydoc
+/rlcmeter/Release
