@@ -30,6 +30,7 @@
 
 #include <assert.h> // my test
 #include "SPI_communication.h"
+#include "stm32f10x_rcc.h"
 
 ///==============================================================================
 
@@ -419,7 +420,7 @@ int state_button_mikky(button_position but_pos, button_tt* button) {
 }
 
 #define DEBUG
-#ifdef DEBUG
+#ifndef DEBUG
 typedef struct {
 	button_position button_pos;
 	button_tt button;
@@ -2068,6 +2069,7 @@ void setup(void) {
 			| RCC_APB2ENR_AFIOEN;
 
 	AFIO->MAPR = AFIO_MAPR_TIM2_REMAP_FULLREMAP | AFIO_MAPR_SWJ_CFG_JTAGDISABLE
+			| AFIO_MAPR_SPI1_REMAP //my XXX
 //|AFIO_MAPR_USART1_REMAP // debug brd
 			;
 	AFIO->MAPR2 = AFIO_MAPR2_TIM15_REMAP;
@@ -2079,8 +2081,7 @@ void setup(void) {
 	NVIC_SetPriority(TIM1_BRK_TIM15_IRQn,
 			NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));	//sequencer
 
-	GPIOA->CRL = GPIO_CRL_MODE3_1 // analog switch
-			;
+	GPIOA->CRL = GPIO_CRL_MODE3_1;// analog switch
 	GPIOA->CRH =
 	GPIO_CRH_CNF10_0 //usart rx
 //|GPIO_CRH_CNF8_1|GPIO_CRH_MODE8_1 // MCO
@@ -2107,13 +2108,15 @@ void setup(void) {
 
 	GPIOB->CRL =
 	GPIO_CRL_CNF7_1  // BUTTON 1 PU
-	| GPIO_CRL_MODE3_1 //SCK
-			| GPIO_CRL_MODE4_1 //MOSI
+	        | GPIO_CRL_MODE3_1 //SCK
+			| GPIO_CRL_MODE4_1 //MOSIF
 			| GPIO_CRL_MODE5_1 // CS
 			| GPIO_CRL_MODE6_1 //RES
-
+            | GPIO_CRL_CNF3_1
+			| GPIO_CRL_CNF4_1
+			| GPIO_CRL_CNF5_1
 //			|GPIO_CRL_CNF1_1|GPIO_CRL_MODE1 // tim3 ch4
-//			|GPIO_CRL_CNF3_1|GPIO_CRL_MODE3 // tim2 ch2
+//    		|GPIO_CRL_CNF3_1|GPIO_CRL_MODE3 // tim2 ch2
 //			|GPIO_CRL_CNF6_1 | GPIO_CRL_MODE6_1 // usart tx
 			;
 	GPIOB->CRH =

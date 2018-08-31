@@ -1,12 +1,13 @@
 #include "n1110.h"
 #include "lcd_generic_font.h"
+#include "main.h"
 
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "core_cmInstr.h"
 
-
+#include "SPI_communication.h"
 
 char mask;
 int xpos;
@@ -25,7 +26,6 @@ void __attribute__ ((noinline))  lcd_init (int mode)
 {
 
 	LCD_GPIO->BSRR = ((LCD_SCK_PIN | LCD_SDA_PIN)<<16) |  ( LCD_RESET_PIN | LCD_CS_PIN );
-
 
 	lcd_hw_reset(); // HW reset
 
@@ -80,8 +80,7 @@ void __attribute__ ((noinline))  lcd_write (lcd_cd_t cd, uint8_t byte){
 
 	//SPI_Cmd(SPI1, ENABLE); // my test
 
-	//__enable_irq(); // my test
-	for(i=0; i<9; i++)
+	/*for(i=0; i<9; i++)
 	{
 		//SPI_I2S_SendData(SPI1, b);
 		if(b & 0x100) LCD_GPIO->BSRR = ( LCD_SCK_PIN<<16 ) | LCD_SDA_PIN; //RESET SCK + SET SDA
@@ -89,8 +88,10 @@ void __attribute__ ((noinline))  lcd_write (lcd_cd_t cd, uint8_t byte){
 		delayus(0);delayus(0);delayus(0);
 		LCD_GPIO->BSRR = LCD_SCK_PIN;
 		b <<= 1;
-	}
-	delayus(0);delayus(0);
+	}*/
+	SPI_I2S_SendData(SPI1, 0b10101010);
+	delayus(500);
+	//delayus(0);
 	/* Slave release */
 	LCD_GPIO->BSRR = ( (LCD_SDA_PIN | LCD_SCK_PIN )<<16 ) | LCD_CS_PIN; //RESET SCK + SDA set CS
 	//SPI_I2S_SendData(SPI1, b);

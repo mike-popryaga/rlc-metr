@@ -15,10 +15,10 @@
 #include "stm32f10x_dma.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h" //my test
-
+#include <errno.h>
 
 #define AIRCR_VECTKEY_MASK    ((uint32_t)0x05FA0000)
-
+#define DEBUG_PRINT
 #define N 500
 #define ADC_N N
 

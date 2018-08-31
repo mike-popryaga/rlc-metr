@@ -11,6 +11,7 @@
 #define LCD_SDA_PIN		GPIO_Pin_4
 #define LCD_CS_PIN		GPIO_Pin_5
 
+
 /**************************************
  * Display macro
  **************************************/
