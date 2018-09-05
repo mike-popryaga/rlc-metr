@@ -36,3 +36,17 @@
 /rlcmeter/Release
 /rlcmeter/html
 /rlcmeter/latex
+DOXYGEN
+/rlcmeter_clean/lcd_generic_font.h
+/rlcmeter_clean/measurements.c
+/rlcmeter_clean/measurements.h
+/rlcmeter_clean/n1110.c
+/rlcmeter_clean/n1110.h
+/rlcmeter_clean/new.c
+/rlcmeter_clean/new.h
+/rlcmeter_clean/arithmetic.c
+/rlcmeter_clean/arithmetic.h
+/rlcmeter_clean/eeprom.c
+/rlcmeter_clean/eeprom.h
+/rlcmeter_clean/flash.c
+/rlcmeter_clean/flash.h
