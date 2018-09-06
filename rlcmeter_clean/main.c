@@ -440,7 +440,9 @@ int main() {
 	uart_tx("\r\nSECCESFULL!!!", 1);
 
 	while (1) {
-
+		LCD_GPIO->BSRR = LCD_SCK_PIN;
+		//SPI_I2S_SendData(SPI1, 0b10111010);
+		uart_tx("& ", 1);
 	}		// while 1*/
 }
 
@@ -469,10 +471,9 @@ void setup(void) {
 			| RCC_APB1ENR_PWREN | RCC_APB1ENR_BKPEN;
 	RCC->APB2ENR = RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN
 			| RCC_APB2ENR_IOPCEN | RCC_APB2ENR_USART1EN | RCC_APB2ENR_TIM15EN
-			| RCC_APB2ENR_AFIOEN;
+			| RCC_APB2ENR_AFIOEN | RCC_APB2ENR_SPI1EN;
 
-	AFIO->MAPR = AFIO_MAPR_TIM2_REMAP_FULLREMAP | AFIO_MAPR_SWJ_CFG_JTAGDISABLE
-			| AFIO_MAPR_SPI1_REMAP //my XXX
+	AFIO->MAPR = AFIO_MAPR_TIM2_REMAP_FULLREMAP | AFIO_MAPR_SPI1_REMAP //my XXX
 //|AFIO_MAPR_USART1_REMAP // debug brd
 	;
 	AFIO->MAPR2 = AFIO_MAPR2_TIM15_REMAP;
@@ -510,25 +511,29 @@ void setup(void) {
 	GPIOA->BRR = GPIO_Pin_3; // ANALOG ON
 
 	GPIOB->CRL =
-	GPIO_CRL_CNF7_1  // BUTTON 1 PU
-	| GPIO_CRL_MODE3_1 //SCK
-			| GPIO_CRL_MODE4_1 //MOSIF
-			| GPIO_CRL_MODE5_1 // CS
+	          GPIO_CRL_CNF7_1  // BUTTON 1 PU
+	        | GPIO_CRL_MODE3_1 //SCK
+		//
+			| GPIO_CRL_MODE5_1 // mosi
 			| GPIO_CRL_MODE6_1 //RES
-			| GPIO_CRL_CNF3_1 | GPIO_CRL_CNF4_1 | GPIO_CRL_CNF5_1
+			| GPIO_CRL_CNF3_1
+			| GPIO_CRL_CNF5_1
 //			|GPIO_CRL_CNF1_1|GPIO_CRL_MODE1 // tim3 ch4
 //    		|GPIO_CRL_CNF3_1|GPIO_CRL_MODE3 // tim2 ch2
 //			|GPIO_CRL_CNF6_1 | GPIO_CRL_MODE6_1 // usart tx
 			;
 	GPIOB->CRH =
-	GPIO_CRH_CNF8_1 // BUTTON 2
-	| GPIO_CRH_MODE13_1 // diag 1
-			| GPIO_CRH_MODE14_1 // diag 2
-	;
+	          GPIO_CRH_CNF8_1 // BUTTON 2
+	        | GPIO_CRH_MODE13_1 // diag 1
+			| GPIO_CRH_MODE14_1; // diag 2
 
 	GPIOB->BSRR = GPIO_Pin_8 | GPIO_Pin_7; // BUTTON 1,2 PU
-	GPIOB->BRR = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_13
-			| GPIO_Pin_14; // 0 diag 1,2 outputs
+	GPIOB->BRR = GPIO_Pin_3
+			   | GPIO_Pin_4
+			   | GPIO_Pin_5
+			   | GPIO_Pin_6
+			   | GPIO_Pin_13
+			   | GPIO_Pin_14; // 0 diag 1,2 outputs
 
 	GPIOC->CRL = 0;
 	GPIOC->CRH = GPIO_CRH_CNF13_1; // BUTTON 3
@@ -604,8 +609,7 @@ void setup(void) {
 	DMA1_Channel1->CNDTR = N;
 	DMA1_Channel1->CCR = DMA_CCR1_MINC | DMA_CCR1_PL_0 | DMA_CCR1_CIRC |
 	DMA_MemoryDataSize_HalfWord | DMA_PeripheralDataSize_HalfWord
-			| DMA_CCR1_TCIE | DMA_CCR1_HTIE
-	;
+			| DMA_CCR1_TCIE | DMA_CCR1_HTIE;
 	DMA1_Channel1->CCR |= DMA_CCR1_EN;
 
 	ADC1->CR1 = ADC_CR1_DISCEN;
@@ -666,6 +670,30 @@ void setup(void) {
 	TIM15->CR1 = TIM_CR1_CEN;
 
 	GPIOA->BSRR = GPIO_Pin_15; // BACKLIGHT ON
+	/*
+	 *
+
+RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+
+RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+GPIOB->CRL |= GPIO_CRL_MODE4;
+GPIOB->CRL &= ~GPIO_CRL_CNF4;
+GPIOB->BSRR = GPIO_BSRR_BS4;
+GPIOB->CRL |= GPIO_CRL_MODE5;
+GPIOB->CRL &= ~GPIO_CRL_CNF5;
+GPIOB->CRL |= GPIO_CRL_CNF5_1;
+GPIOB->CRL &= ~GPIO_CRL_MODE6;
+GPIOB->CRL &= ~GPIO_CRL_CNF6;
+GPIOB->CRL |= GPIO_CRL_CNF6_1;
+GPIOB->BSRR = GPIO_BSRR_BS6;
+GPIOB->CRL |= GPIO_CRL_MODE7;
+GPIOB->CRL &= ~GPIO_CRL_CNF7;
+GPIOB->CRL |= GPIO_CRL_CNF7_1;
+
+	 *
+	 * */
+
+
 }
 
 void erase(void) {
@@ -711,11 +739,59 @@ volatile int k = 0;
 volatile long long mreal[CH_NUM];
 volatile long long mimag[CH_NUM];
 
+static const uint32_t chn[CH_NUM] = { 1, 2, 7, 17, 8 }; // + VBAT, TEMP, VREF
+
+
+
+static const uint32_t chk[CH_NUM] = {
+                                      ADC_CHANGEOVR + N / 2,
+                                      ADC_CHANGEOVR,
+                                      ADC_CHANGEOVR,
+                                      ADC_CHANGEOVR,
+                                      ADC_CHANGEOVR }; // + VBAT, TEMP, VREF
+
 void TIM1_BRK_TIM15_IRQHandler(void) {
+
+		sys_time_counter++; //my
+
+
+		TIM15->SR &= ~TIM_SR_CC1IF; // clear CC1IF flag
+
+		GPIOB->BSRR = GPIO_Pin_14; // reset
+
+		DMA1_Channel1->CCR &= ~DMA_CCR1_EN;
+		DMA1->IFCR = DMA1_IT_GL1;
+
+		DMA1_Channel1->CNDTR = N;
+		DMA1_Channel1->CCR |= DMA_CCR1_EN;
+
+		ADC1->SQR3 = chn[0];
+		TIM15->ARR = cht[0];
+		TIM15->CCR2 = chk[0];
+
+		GPIOB->BRR = GPIO_Pin_14; // reset
+		//zrap = 0;  // my test
+	//stop: exit(1); // my test
+
+
 }
 
 void __attribute__((optimize("-O3"))) DMA1_Channel1_IRQHandler(void) {
+
+
+		GPIOB->BSRR = GPIO_Pin_13; // set
+
+		DMA1->IFCR = DMA1_IT_GL1;
+
+		GPIOB->BRR = GPIO_Pin_13; // reset
+		__NOP();
+		GPIOB->BSRR = GPIO_Pin_13; // set
+
+		GPIOB->BRR = GPIO_Pin_13; // reset
+
 }
 
 void __attribute__((optimize("-O3"))) DMA1_Channel4_IRQHandler(void) {
+		DMA1->IFCR = DMA1_IT_GL4;
+
 }
